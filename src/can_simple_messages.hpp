@@ -57,6 +57,88 @@ struct Get_Version_msg_t final {
     uint8_t Fw_Version_Unreleased = 0;
 };
 
+// Define message RxSdo
+struct RxSdo_msg_t final {
+    constexpr RxSdo_msg_t() = default;
+
+#ifdef ODRIVE_CAN_MSG_TYPE
+    RxSdo_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+        decode_msg(msg);
+    }
+
+    void encode_msg(TBoard::TCanIntf::TMsg& msg) {
+        encode_buf(can_msg_get_payload(msg).data());
+    }
+
+    void decode_msg(const TBoard::TCanIntf::TMsg& msg) {
+        decode_buf(can_msg_get_payload(msg).data());
+    }
+#endif
+
+    void encode_buf(uint8_t* buf) const {
+        can_set_signal_raw<uint8_t>(buf, Opcode, 0, 8, true);
+        can_set_signal_raw<uint16_t>(buf, Endpoint_ID, 8, 16, true);
+        can_set_signal_raw<uint8_t>(buf, Reserved, 24, 8, true);
+        can_set_signal_raw<float>(buf, Value, 32, 32, true);
+    }
+
+    void decode_buf(const uint8_t* buf) {
+        Opcode = can_get_signal_raw<uint8_t>(buf, 0, 8, true);
+        Endpoint_ID = can_get_signal_raw<uint16_t>(buf, 8, 16, true);
+        Reserved = can_get_signal_raw<uint8_t>(buf, 24, 8, true);
+        Value = can_get_signal_raw<float>(buf, 32, 32, true);
+    }
+
+    static const uint8_t cmd_id = 0x04;
+    static const uint8_t msg_length = 8;
+    
+    uint8_t Opcode = 0; // 
+    uint16_t Endpoint_ID = 0; //
+    uint8_t Reserved = 0;
+    float Value = 0.0f;
+};
+
+// Define message TxSdo
+struct TxSdo_msg_t final {
+    constexpr TxSdo_msg_t() = default;
+
+#ifdef ODRIVE_CAN_MSG_TYPE
+    TxSdo_msg_t(const TBoard::TCanIntf::TMsg& msg) {
+        decode_msg(msg);
+    }
+
+    void encode_msg(TBoard::TCanIntf::TMsg& msg) {
+        encode_buf(can_msg_get_payload(msg).data());
+    }
+
+    void decode_msg(const TBoard::TCanIntf::TMsg& msg) {
+        decode_buf(can_msg_get_payload(msg).data());
+    }
+#endif
+
+    void encode_buf(uint8_t* buf) const {
+        can_set_signal_raw<uint8_t>(buf, Reserved0, 0, 8, true);
+        can_set_signal_raw<uint16_t>(buf, Endpoint_ID, 8, 16, true);
+        can_set_signal_raw<uint8_t>(buf, Reserved1, 24, 8, true);
+        can_set_signal_raw<float>(buf, Value, 32, 32, true);
+    }
+
+    void decode_buf(const uint8_t* buf) {
+        Reserved0 = can_get_signal_raw<uint8_t>(buf, 0, 8, true);
+        Endpoint_ID = can_get_signal_raw<uint16_t>(buf, 8, 16, true);
+        Reserved1 = can_get_signal_raw<uint8_t>(buf, 24, 8, true);
+        Value = can_get_signal_raw<float>(buf, 32, 32, true);
+    }
+
+    static const uint8_t cmd_id = 0x05;
+    static const uint8_t msg_length = 8;
+    
+    uint8_t Reserved0 = 0; // 
+    uint16_t Endpoint_ID = 0; //
+    uint8_t Reserved1 = 0;
+    float Value = 0.0f;
+};
+
 struct Heartbeat_msg_t final {
     constexpr Heartbeat_msg_t() = default;
 

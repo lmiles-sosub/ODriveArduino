@@ -201,4 +201,17 @@ enum ODriveCanError {
     CAN_ERROR_PROTOCOL_INIT                  = 0x00000008,
 };
 
+// ODrive CAN Simple End points
+enum ODriveCanEndpoints {
+    SPI_ENCODER0_RAW                         = 610,
+    POS_ESTIMATE                             = 203,
+    VEL_LIMIT                                = 404,
+    VEL_LIMIT_TOLERACNE                      = 405,
+};
+
+enum OdriveOpcode {
+    READ                                    = 0,
+    WRITE                                   = 1,
+};
+
 #endif
